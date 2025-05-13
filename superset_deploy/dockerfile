@@ -1,0 +1,12 @@
+FROM apache/superset:latest
+
+USER root
+
+RUN pip install --upgrade pip && \
+    pip install --no-cache-dir \
+    psycopg2-binary \
+    redis \
+    duckdb \
+    sqlalchemy-duckdb
+
+COPY superset/assets /app/superset/assets/
