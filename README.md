@@ -1,2 +1,2 @@
-docker-compose build \n
+docker-compose build <br>
 docker-compose up
