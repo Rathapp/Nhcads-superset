@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  superset:
+    build: .
+    container_name: custom_superset
+    ports:
+      - "8088:8088"
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - PYTHONPATH=/app/pythonpath
+      - DATABASE_URL=postgresql+psycopg2://superset:superset@db:5432/superset
+    depends_on:
+      - redis
+      - db
+    volumes:
+      - ./superset/config:/app/pythonpath
+      - ./superset/assets:/app/superset/assets
+      - ./data/preart.db:/app/data/preart.db
+    command: >
+      /bin/sh -c "
+      superset db upgrade &&
+      superset fab create-admin \
+        --username admin \
+        --firstname Superset \
+        --lastname Admin \
+        --email admin@superset.com \
+        --password admin &&
+      superset init &&
+      superset run -h 0.0.0.0 -p 8088"
+
+  db:
+    image: postgres:15
+    container_name: superset_db
+    environment:
+      POSTGRES_DB: superset
+      POSTGRES_USER: superset
+      POSTGRES_PASSWORD: superset
+    volumes:
+      - ./postgresData:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: superset_redis
+# volumes:
+#   pgdata:
