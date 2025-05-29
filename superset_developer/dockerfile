@@ -2,11 +2,17 @@ FROM apache/superset:latest
 
 USER root
 
-RUN pip install --upgrade pip && \
+RUN apt-get update && \
+    apt-get install -y pkg-config && \
+    apt-get install -y gcc && \
+    pip install --upgrade pip && \
     pip install --no-cache-dir \
     psycopg2-binary \
     redis \
     duckdb \
-    sqlalchemy-duckdb
+    duckdb-engine \
+    mysqlclient \
+    Pillow
+    
 
 COPY superset/assets /app/superset/assets/
