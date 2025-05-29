@@ -37,12 +37,26 @@ services:
       POSTGRES_USER: superset
       POSTGRES_PASSWORD: superset
     volumes:
-      - ./postgresData:/var/lib/postgresql/data
+      - ./postgres:/var/lib/postgresql/data
 
   redis:
     image: redis:7
     container_name: superset_redis
+    volumes:
+      - "./redis/data:/data"
     ports:
       - "6379:6379"
+
+  nginx:
+    image: nginx:alpine
+    restart: always
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - superset
 # volumes:
 #   pgdata:
